@@ -1,0 +1,138 @@
+package com.example.dailydash2.fragments;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.dailydash2.R;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ProfileFragment extends Fragment {
+
+    private EditText usernameInput, newPasswordInput;
+    private Button updateUsernameButton, updatePasswordButton;
+    private String rememberToken;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        usernameInput = view.findViewById(R.id.usernameInput);
+        newPasswordInput = view.findViewById(R.id.newPasswordInput);
+        updateUsernameButton = view.findViewById(R.id.updateUsernameButton);
+        updatePasswordButton = view.findViewById(R.id.updatePasswordButton);
+
+        rememberToken = requireActivity()
+                .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                .getString("remember_token", null);
+
+        // Obtener y mostrar el nombre actual del usuario
+        loadCurrentUsername();
+
+        updateUsernameButton.setOnClickListener(v -> {
+            String newUsername = usernameInput.getText().toString().trim();
+            if (!newUsername.isEmpty()) {
+                updateUsername(newUsername);
+            } else {
+                Toast.makeText(getContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        updatePasswordButton.setOnClickListener(v -> {
+            String newPassword = newPasswordInput.getText().toString().trim();
+            if (!newPassword.isEmpty()) {
+                updatePassword(newPassword);
+            } else {
+                Toast.makeText(getContext(), "Introduce una contraseña nueva", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return view;
+    }
+
+    private void loadCurrentUsername() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                "http://192.168.0.102/ProyectoDAM/get_username.php",
+                response -> {
+                    if (!response.trim().startsWith("ERROR")) {
+                        usernameInput.setText(response.trim());
+                    } else {
+                        Toast.makeText(getContext(), "Error al cargar usuario", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("token", rememberToken);
+                return map;
+            }
+        };
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+
+    private void updateUsername(String newUsername) {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                "http://192.168.0.102/ProyectoDAM/update_username.php",
+                response -> {
+                    if (response.trim().equals("OK")) {
+                        Toast.makeText(getContext(), "Nombre actualizado", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("token", rememberToken);
+                map.put("username", newUsername);
+                return map;
+            }
+        };
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+
+    private void updatePassword(String newPassword) {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                "http://192.168.0.102/ProyectoDAM/update_password.php",
+                response -> {
+                    if (response.trim().equals("OK")) {
+                        Toast.makeText(getContext(), "Contraseña modificada", Toast.LENGTH_SHORT).show();
+                        newPasswordInput.setText("");
+                    } else {
+                        Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("token", rememberToken);
+                map.put("password", newPassword);
+                return map;
+            }
+        };
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+
+}
+
