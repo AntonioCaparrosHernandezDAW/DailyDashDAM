@@ -15,14 +15,15 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
+import com.example.dailydash2.models.BbddConnection;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FormNoteFragment extends Fragment {
 
-    private static final String CREATE_URL = "http://192.168.0.102/ProyectoDAM/create_note.php";
-    private static final String UPDATE_URL = "http://192.168.0.102/ProyectoDAM/update_note.php";
+    private static final String CREATE_URL = BbddConnection.getUrl("create_note.php");
+    private static final String UPDATE_URL = BbddConnection.getUrl("update_note.php");
 
     private EditText titleInput, textInput;
     private int noteId = -1; // -1 indica creación

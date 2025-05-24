@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
+import com.example.dailydash2.models.BbddConnection;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -99,10 +100,10 @@ public class ToDoFormFragment extends Fragment {
             params.put("endDate", end);
 
             if (idTarea != null && idTarea != -1) {
-                url = "http://192.168.0.102/ProyectoDAM/update_todo.php";
+                url = BbddConnection.getUrl("update_todo.php");
                 params.put("idTarea", String.valueOf(idTarea));
             } else {
-                url = "http://192.168.0.102/ProyectoDAM/create_todo.php";
+                url = BbddConnection.getUrl("create_todo.php");
             }
 
             StringRequest request = new StringRequest(Request.Method.POST, url,

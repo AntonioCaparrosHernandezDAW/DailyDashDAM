@@ -19,6 +19,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
+import com.example.dailydash2.models.BbddConnection;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,8 +30,8 @@ public class DiaryFragment extends Fragment {
     private EditText diaryText;
     private DatePicker datePicker;
     private String rememberToken;
-    private final String GET_URL = "http://192.168.0.102/ProyectoDAM/get_diary.php";
-    private final String SAVE_URL = "http://192.168.0.102/ProyectoDAM/save_diary.php";
+    private final String GET_URL = BbddConnection.getUrl("get_diary.php");
+    private final String SAVE_URL = BbddConnection.getUrl("save_diary.php");
     private ProgressBar progressBar;
 
     @Nullable

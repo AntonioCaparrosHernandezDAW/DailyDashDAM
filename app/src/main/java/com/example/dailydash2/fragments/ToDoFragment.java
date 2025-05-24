@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
 import com.example.dailydash2.adapters.ToDoAdapter;
+import com.example.dailydash2.models.BbddConnection;
 import com.example.dailydash2.models.ToDo;
 
 import org.json.JSONArray;
@@ -65,7 +66,7 @@ public class ToDoFragment extends Fragment {
     }
 
     private void loadTodos() {
-        String url = "http://192.168.0.102/ProyectoDAM/get_todos.php";
+        String url = BbddConnection.getUrl("get_todos.php");
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {

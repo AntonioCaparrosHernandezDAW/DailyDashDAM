@@ -17,6 +17,8 @@ public class ToDo {
         this.completada = completada;
     }
 
+    //No es necesario un setter del ID porque no tengo pensado que se pueda modificar
+
     public int getIdTarea() {
         return idTarea;
     }

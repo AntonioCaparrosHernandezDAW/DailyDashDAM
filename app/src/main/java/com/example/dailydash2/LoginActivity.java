@@ -14,6 +14,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.dailydash2.models.BbddConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText usernameInput, passwordInput;
     Button loginBtn;
 
-    private static final String LOGIN_URL = "http://192.168.0.102/ProyectoDAM/login.php";
+    private static final String LOGIN_URL = BbddConnection.getUrl("login.php");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

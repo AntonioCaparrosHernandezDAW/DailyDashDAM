@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
 import com.example.dailydash2.fragments.FormNoteFragment;
+import com.example.dailydash2.models.BbddConnection;
 import com.example.dailydash2.models.Note;
 
 import java.util.HashMap;
@@ -98,7 +99,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     private void deleteNote(int idNote, int position) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                "http://192.168.0.102/ProyectoDAM/delete_note.php",
+                BbddConnection.getUrl("delete_note.php"),
                 response -> {
                     if (response.trim().equals("OK")) {
                         notes.remove(position);

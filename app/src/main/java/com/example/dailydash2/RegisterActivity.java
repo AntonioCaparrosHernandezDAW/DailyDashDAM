@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.dailydash2.models.BbddConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText usernameInput, emailInput, passwordInput;
     Button registerBtn;
 
-    private static final String REGISTER_URL = "http://192.168.0.102/ProyectoDAM/register.php"; // Cambia a tu IP local si es necesario
+    private static final String REGISTER_URL = BbddConnection.getUrl("register.php");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

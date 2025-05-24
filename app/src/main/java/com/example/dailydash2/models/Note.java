@@ -13,6 +13,8 @@ public class Note {
         this.date = date;
     }
 
+    //No es necesario un setter del ID porque no tengo pensado que se pueda modificar
+
     public int getIdNote() {
         return idNote;
     }

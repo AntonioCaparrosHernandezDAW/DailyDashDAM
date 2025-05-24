@@ -18,6 +18,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
 import com.example.dailydash2.adapters.NoteAdapter;
+import com.example.dailydash2.models.BbddConnection;
 import com.example.dailydash2.models.Note;
 
 import org.json.JSONArray;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 public class NotesFragment extends Fragment {
 
-    private static final String NOTES_URL = "http://192.168.0.102/ProyectoDAM/get_notes.php";
+    private static final String NOTES_URL = BbddConnection.getUrl("get_notes.php");
     private RecyclerView recyclerView;
     private NoteAdapter adapter;
     private List<Note> noteList = new ArrayList<>();

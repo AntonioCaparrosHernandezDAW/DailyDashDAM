@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
+import com.example.dailydash2.models.BbddConnection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class ProfileFragment extends Fragment {
 
     private void loadCurrentUsername() {
         StringRequest request = new StringRequest(Request.Method.POST,
-                "http://192.168.0.102/ProyectoDAM/get_username.php",
+                BbddConnection.getUrl("get_username.php"),
                 response -> {
                     if (!response.trim().startsWith("ERROR")) {
                         usernameInput.setText(response.trim());
@@ -89,7 +90,7 @@ public class ProfileFragment extends Fragment {
 
     private void updateUsername(String newUsername) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                "http://192.168.0.102/ProyectoDAM/update_username.php",
+                BbddConnection.getUrl("update_username.php"),
                 response -> {
                     if (response.trim().equals("OK")) {
                         Toast.makeText(getContext(), "Nombre actualizado", Toast.LENGTH_SHORT).show();
@@ -112,7 +113,7 @@ public class ProfileFragment extends Fragment {
 
     private void updatePassword(String newPassword) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                "http://192.168.0.102/ProyectoDAM/update_password.php",
+                BbddConnection.getUrl("update_password.php"),
                 response -> {
                     if (response.trim().equals("OK")) {
                         Toast.makeText(getContext(), "Contraseña modificada", Toast.LENGTH_SHORT).show();

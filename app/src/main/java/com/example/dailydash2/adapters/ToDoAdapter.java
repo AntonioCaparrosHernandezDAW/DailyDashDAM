@@ -20,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
 import com.example.dailydash2.fragments.ToDoFormFragment;
+import com.example.dailydash2.models.BbddConnection;
 import com.example.dailydash2.models.ToDo;
 
 import java.util.HashMap;
@@ -92,7 +93,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder
             int nuevoEstado = todo.isCompletada() ? 0 : 1;
 
             StringRequest request = new StringRequest(Request.Method.POST,
-                    "http://192.168.0.102/ProyectoDAM/toggle_complete_todo.php",
+                    BbddConnection.getUrl("toggle_complete_todo.php"),
                     response -> {
                         if (response.trim().equals("OK")) {
                             todoList.get(position).setCompletada(nuevoEstado == 1);
@@ -119,7 +120,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder
 
     private void deleteTodo(int idTarea, int position) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                "http://192.168.0.102/ProyectoDAM/delete_todo.php",
+                BbddConnection.getUrl("delete_todo.php"),
                 response -> {
                     if (response.trim().equals("OK")) {
                         todoList.remove(position);
