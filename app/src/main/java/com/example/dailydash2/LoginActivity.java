@@ -22,7 +22,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     EditText usernameInput, passwordInput;
-    Button loginBtn;
+    Button loginBtn, exitButton;
 
     private static final String LOGIN_URL = BbddConnection.getUrl("login.php");
 
@@ -34,12 +34,17 @@ public class LoginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.username_input);
         passwordInput = findViewById(R.id.password_input);
         loginBtn = findViewById(R.id.login_btn);
+        exitButton = findViewById(R.id.exitButton);
 
         TextView registerTextView = findViewById(R.id.registerTextView);
 
         registerTextView.setOnClickListener(v -> {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
+        });
+
+        exitButton.setOnClickListener(v -> {
+            finishAffinity(); // Cierra todas las activities y sale de la app
         });
 
 

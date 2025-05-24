@@ -42,9 +42,14 @@ public class ToDoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
-        rememberToken = requireActivity()
-                .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                .getString("remember_token", null);
+        // Obtener token desde argumentos o intent
+        if (getArguments() != null) {
+            rememberToken = getArguments().getString("remember_token");
+        } else {
+            rememberToken = requireActivity()
+                    .getIntent()
+                    .getStringExtra("remember_token");
+        }
 
         recyclerView = view.findViewById(R.id.todoRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -54,6 +59,12 @@ public class ToDoFragment extends Fragment {
         Button createBtn = view.findViewById(R.id.createTodoButton);
         createBtn.setOnClickListener(v -> {
             Fragment formFragment = new ToDoFormFragment();
+
+            // Pasar el token al formulario
+            Bundle args = new Bundle();
+            args.putString("remember_token", rememberToken);
+            formFragment.setArguments(args);
+
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, formFragment)
@@ -65,7 +76,15 @@ public class ToDoFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadTodos(); // Recargar cada vez que se vuelve al fragmento
+    }
+
     private void loadTodos() {
+        if (rememberToken == null) return;
+
         String url = BbddConnection.getUrl("get_todos.php");
 
         StringRequest request = new StringRequest(Request.Method.POST, url,

@@ -24,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
 import com.example.dailydash2.models.BbddConnection;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,8 +51,8 @@ public class ToDoFormFragment extends Fragment {
         saveButton = view.findViewById(R.id.saveTodoButton);
 
         rememberToken = requireActivity()
-                .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                .getString("remember_token", null);
+                .getIntent()
+                .getStringExtra("remember_token");
 
         // Spinner de prioridad
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -88,6 +89,20 @@ public class ToDoFormFragment extends Fragment {
 
             if (title.isEmpty() || start.isEmpty() || end.isEmpty()) {
                 Toast.makeText(getContext(), "Rellena todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                java.util.Date startDate = sdf.parse(start);
+                java.util.Date endDate = sdf.parse(end);
+
+                if (startDate != null && endDate != null && endDate.before(startDate)) {
+                    Toast.makeText(getContext(), "La fecha de fin no puede ser anterior a la de inicio", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Error al comparar fechas", Toast.LENGTH_SHORT).show();
                 return;
             }
 
