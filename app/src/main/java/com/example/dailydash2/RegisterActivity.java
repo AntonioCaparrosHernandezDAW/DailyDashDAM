@@ -37,11 +37,10 @@ public class RegisterActivity extends AppCompatActivity {
         TextView registerTextView = findViewById(R.id.loginTextView);
 
         registerTextView.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RegisterActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
-
 
         registerBtn.setOnClickListener(view -> {
             String username = usernameInput.getText().toString().trim();

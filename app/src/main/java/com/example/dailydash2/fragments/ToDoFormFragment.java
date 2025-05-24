@@ -1,6 +1,7 @@
 package com.example.dailydash2.fragments;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,11 +16,17 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.dailydash2.R;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ToDoFormFragment extends Fragment {
 
@@ -27,6 +34,8 @@ public class ToDoFormFragment extends Fragment {
     private Spinner prioritySpinner;
     private Button saveButton;
     private final Calendar calendar = Calendar.getInstance();
+    private String rememberToken;
+    private Integer idTarea = null;
 
     @Nullable
     @Override
@@ -39,7 +48,11 @@ public class ToDoFormFragment extends Fragment {
         prioritySpinner = view.findViewById(R.id.prioritySpinner);
         saveButton = view.findViewById(R.id.saveTodoButton);
 
-        // Cargar spinner de prioridad
+        rememberToken = requireActivity()
+                .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                .getString("remember_token", null);
+
+        // Spinner de prioridad
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 requireContext(),
                 R.array.priority_levels,
@@ -47,13 +60,69 @@ public class ToDoFormFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         prioritySpinner.setAdapter(adapter);
 
-        // Configurar selección de fecha con diálogos
+        // Date pickers
         startDateInput.setOnClickListener(v -> showDatePicker(startDateInput));
         endDateInput.setOnClickListener(v -> showDatePicker(endDateInput));
 
-        // Guardar lógica (se implementará luego)
+        // Comprobar si venimos en modo edición
+        Bundle args = getArguments();
+        if (args != null) {
+            idTarea = args.getInt("idTarea", -1);
+            if (idTarea != -1) {
+                titleInput.setText(args.getString("titulo", ""));
+                startDateInput.setText(args.getString("fechaInicio", ""));
+                endDateInput.setText(args.getString("fechaFin", ""));
+
+                String prioridad = args.getString("prioridad", "Media");
+                int position = ((ArrayAdapter<String>) prioritySpinner.getAdapter()).getPosition(prioridad);
+                prioritySpinner.setSelection(position);
+            }
+        }
+
         saveButton.setOnClickListener(v -> {
-            // Aquí irá el guardado en la base de datos
+            String title = titleInput.getText().toString().trim();
+            String priority = prioritySpinner.getSelectedItem().toString();
+            String start = startDateInput.getText().toString().trim();
+            String end = endDateInput.getText().toString().trim();
+
+            if (title.isEmpty() || start.isEmpty() || end.isEmpty()) {
+                Toast.makeText(getContext(), "Rellena todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String url;
+            Map<String, String> params = new HashMap<>();
+            params.put("token", rememberToken);
+            params.put("title", title);
+            params.put("priority", priority);
+            params.put("startDate", start);
+            params.put("endDate", end);
+
+            if (idTarea != null && idTarea != -1) {
+                url = "http://192.168.0.102/ProyectoDAM/update_todo.php";
+                params.put("idTarea", String.valueOf(idTarea));
+            } else {
+                url = "http://192.168.0.102/ProyectoDAM/create_todo.php";
+            }
+
+            StringRequest request = new StringRequest(Request.Method.POST, url,
+                    response -> {
+                        if (response.trim().equals("OK")) {
+                            Toast.makeText(getContext(), "Tarea guardada", Toast.LENGTH_SHORT).show();
+                            requireActivity().getSupportFragmentManager().popBackStack();
+                        } else {
+                            Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
+                        }
+                    },
+                    error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+            ) {
+                @Override
+                protected Map<String, String> getParams() {
+                    return params;
+                }
+            };
+
+            Volley.newRequestQueue(requireContext()).add(request);
         });
 
         return view;
