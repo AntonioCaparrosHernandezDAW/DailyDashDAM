@@ -85,8 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    Log.e("LOGIN_ERROR", "Error de red: " + error.getMessage());
-                    Toast.makeText(this, "Error de red: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error de red", Toast.LENGTH_SHORT).show();
                 }
         ) {
             @Override
