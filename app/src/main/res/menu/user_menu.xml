@@ -4,5 +4,5 @@
         android:title="Perfil" />
     <item
         android:id="@+id/menu_logout"
-        android:title="Salir" />
+        android:title="Cerrar Sesión" />
 </menu>

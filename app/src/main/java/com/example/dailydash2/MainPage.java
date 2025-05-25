@@ -3,9 +3,11 @@ package com.example.dailydash2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,7 @@ import com.example.dailydash2.fragments.DiaryFragment;
 import com.example.dailydash2.fragments.NotesFragment;
 import com.example.dailydash2.fragments.PremiumDialogFragment;
 import com.example.dailydash2.fragments.ToDoFragment;
+import com.example.dailydash2.fragments.ProfileFragment;
 import com.example.dailydash2.models.BbddConnection;
 
 import java.util.Arrays;
@@ -88,6 +91,34 @@ public class MainPage extends AppCompatActivity {
 
             drawerLayout.closeDrawer(GravityCompat.START);
         });
+
+        userMenuIcon.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(MainPage.this, v);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.user_menu, popup.getMenu());
+
+            popup.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.menu_profile) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ProfileFragment())
+                            .addToBackStack(null)
+                            .commit();
+                    return true;
+                } else if (itemId == R.id.menu_logout) {
+                    Intent intent = new Intent(MainPage.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    return true;
+                }
+
+                return false;
+            });
+
+            popup.show();
+        });
+
 
         // Cargar fragmento inicial
         getSupportFragmentManager().beginTransaction()
