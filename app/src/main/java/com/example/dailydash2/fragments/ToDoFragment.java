@@ -1,6 +1,5 @@
 package com.example.dailydash2.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -36,15 +35,16 @@ public class ToDoFragment extends Fragment {
     private ToDoAdapter adapter;
     private List<ToDo> todoList = new ArrayList<>();
     private String rememberToken;
+    private boolean esPremium = false;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_to_do, container, false);
 
-        // Obtener token desde argumentos o intent
         if (getArguments() != null) {
             rememberToken = getArguments().getString("remember_token");
+            esPremium = getArguments().getBoolean("esPremium", false);
         } else {
             rememberToken = requireActivity()
                     .getIntent()
@@ -60,9 +60,10 @@ public class ToDoFragment extends Fragment {
         createBtn.setOnClickListener(v -> {
             Fragment formFragment = new ToDoFormFragment();
 
-            // Pasar el token al formulario
+            // Pasar token y esPremium al formulario
             Bundle args = new Bundle();
             args.putString("remember_token", rememberToken);
+            args.putBoolean("esPremium", esPremium);
             formFragment.setArguments(args);
 
             requireActivity().getSupportFragmentManager()
@@ -79,7 +80,7 @@ public class ToDoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadTodos(); // Recargar cada vez que se vuelve al fragmento
+        loadTodos(); // Recargar al volver
     }
 
     private void loadTodos() {

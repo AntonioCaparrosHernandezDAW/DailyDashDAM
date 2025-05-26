@@ -43,6 +43,7 @@ public class MainPage extends AppCompatActivity {
 
     ArrayAdapter<String> adapter;
     String rememberToken;
+    boolean esPremium = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,10 @@ public class MainPage extends AppCompatActivity {
         menuList.setOnItemClickListener((parent, view, position, id) -> {
             Fragment selectedFragment = null;
 
+            Bundle args = new Bundle();
+            args.putString("remember_token", rememberToken);
+            args.putBoolean("esPremium", esPremium);
+
             switch (position) {
                 case 0:
                     selectedFragment = new NotesFragment();
@@ -80,10 +85,12 @@ public class MainPage extends AppCompatActivity {
                     break;
                 case 4:
                     verificarYMostrarPremiumDialog();
+                    drawerLayout.closeDrawer(GravityCompat.START);
                     return;
             }
 
             if (selectedFragment != null) {
+                selectedFragment.setArguments(args);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, selectedFragment)
                         .commit();
@@ -102,6 +109,7 @@ public class MainPage extends AppCompatActivity {
                     ProfileFragment profileFragment = new ProfileFragment();
                     Bundle args = new Bundle();
                     args.putString("remember_token", rememberToken);
+                    args.putBoolean("esPremium", esPremium);
                     profileFragment.setArguments(args);
 
                     getSupportFragmentManager().beginTransaction()
@@ -124,6 +132,35 @@ public class MainPage extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new NotesFragment())
                 .commit();
+
+        verificarEstadoPremium(rememberToken);
+    }
+
+    private void verificarEstadoPremium(String token) {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                BbddConnection.getUrl("check_premium.php"),
+                response -> {
+                    esPremium = response.trim().equals("1");
+                    actualizarMenuPremium(esPremium);
+                },
+                error -> {
+                    esPremium = false;
+                    actualizarMenuPremium(false);
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("token", rememberToken);
+                return map;
+            }
+        };
+
+        Volley.newRequestQueue(this).add(request);
+    }
+
+    private void actualizarMenuPremium(boolean premium) {
+        menuItems.set(4, premium ? "Ya eres Premium" : "Comprar Premium");
+        adapter.notifyDataSetChanged();
     }
 
     private void verificarYMostrarPremiumDialog() {

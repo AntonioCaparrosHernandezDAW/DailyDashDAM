@@ -1,8 +1,9 @@
 package com.example.dailydash2.fragments;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +31,13 @@ public class DiaryFragment extends Fragment {
     private EditText diaryText;
     private DatePicker datePicker;
     private String rememberToken;
+    private boolean esPremium = false;  // Nueva variable para controlar estado Premium
+
     private final String GET_URL = BbddConnection.getUrl("get_diary.php");
     private final String SAVE_URL = BbddConnection.getUrl("save_diary.php");
     private ProgressBar progressBar;
+
+    private int maxLength = 100;  // Por defecto límite para no premium
 
     @Nullable
     @Override
@@ -45,20 +50,52 @@ public class DiaryFragment extends Fragment {
         Button saveButton = view.findViewById(R.id.saveDiaryButton);
         progressBar = view.findViewById(R.id.diaryProgressBar);
 
-        rememberToken = getActivity().getIntent().getStringExtra("remember_token");
+        // Obtener argumentos
+        if (getArguments() != null) {
+            rememberToken = getArguments().getString("remember_token");
+            esPremium = getArguments().getBoolean("esPremium", false);
+        } else {
+            rememberToken = getActivity().getIntent().getStringExtra("remember_token");
+        }
+
+        // Establecer límite de caracteres según premium
+        maxLength = esPremium ? 5000 : 100;
+
+        diaryText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No usamos
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > maxLength) {
+                    diaryText.setError("Límite máximo de " + maxLength + " caracteres");
+                } else {
+                    diaryText.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No usamos
+            }
+        });
 
         // Cargar texto al iniciar
         loadDiaryText(getSelectedDate());
 
         // Cargar al cambiar fecha
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {   //si no pongo el if ese raro que te lo pone el ID no funciona
-            datePicker.setOnDateChangedListener((view1, year, month, day) -> {
-                loadDiaryText(getSelectedDate());
-            });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            datePicker.setOnDateChangedListener((view1, year, month, day) -> loadDiaryText(getSelectedDate()));
         }
 
         saveButton.setOnClickListener(v -> {
             String text = diaryText.getText().toString().trim();
+            if (text.length() > maxLength) {
+                Toast.makeText(getContext(), "No puedes escribir más de " + maxLength + " caracteres", Toast.LENGTH_SHORT).show();
+                return;
+            }
             saveDiaryText(getSelectedDate(), text);
         });
 
@@ -73,22 +110,22 @@ public class DiaryFragment extends Fragment {
     }
 
     private void loadDiaryText(String date) {
-        progressBar.setVisibility(View.VISIBLE);            // Mostrar la barra
-        diaryText.setText("");                              // Limpiar texto
-        diaryText.setHint("Cargando...");                   // Cambiar hint
-        diaryText.setEnabled(false);                        // Bloquear escritura
+        progressBar.setVisibility(View.VISIBLE);
+        diaryText.setText("");
+        diaryText.setHint("Cargando...");
+        diaryText.setEnabled(false);
 
         StringRequest request = new StringRequest(Request.Method.POST, GET_URL,
                 response -> {
-                    diaryText.setText(response.trim());      // Cargar contenido
-                    diaryText.setHint("");                   // Limpiar hint (opcional)
-                    diaryText.setEnabled(true);              // Habilitar escritura
-                    progressBar.setVisibility(View.GONE);    // Ocultar progreso
+                    diaryText.setText(response.trim());
+                    diaryText.setHint("");
+                    diaryText.setEnabled(true);
+                    progressBar.setVisibility(View.GONE);
                 },
                 error -> {
                     Toast.makeText(getContext(), "Error al cargar entrada", Toast.LENGTH_SHORT).show();
-                    diaryText.setHint("Error al cargar");    // Mostrar mensaje útil
-                    diaryText.setEnabled(true);              // Permitir intentar escribir
+                    diaryText.setHint("Error al cargar");
+                    diaryText.setEnabled(true);
                     progressBar.setVisibility(View.GONE);
                 }) {
             @Override
@@ -102,9 +139,6 @@ public class DiaryFragment extends Fragment {
 
         Volley.newRequestQueue(requireContext()).add(request);
     }
-
-
-
 
     private void saveDiaryText(String date, String text) {
         StringRequest request = new StringRequest(Request.Method.POST, SAVE_URL,
@@ -130,4 +164,3 @@ public class DiaryFragment extends Fragment {
         Volley.newRequestQueue(requireContext()).add(request);
     }
 }
-

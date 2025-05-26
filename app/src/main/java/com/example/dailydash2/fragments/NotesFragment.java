@@ -1,6 +1,5 @@
 package com.example.dailydash2.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +36,7 @@ public class NotesFragment extends Fragment {
     private NoteAdapter adapter;
     private List<Note> noteList = new ArrayList<>();
     private String rememberToken;
+    private boolean esPremium = false; // Añadido para controlar el estado Premium
 
     @Nullable
     @Override
@@ -45,13 +45,28 @@ public class NotesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.notesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        rememberToken = getActivity().getIntent().getStringExtra("remember_token"); // 👈 ¡mueve esto aquí!
+        // Obtener argumentos
+        if (getArguments() != null) {
+            rememberToken = getArguments().getString("remember_token");
+            esPremium = getArguments().getBoolean("esPremium", false);
+        } else {
+            // Fallback por si acaso
+            rememberToken = getActivity().getIntent().getStringExtra("remember_token");
+        }
+
         adapter = new NoteAdapter(requireContext(), noteList, rememberToken);
         recyclerView.setAdapter(adapter);
 
         Button createNoteButton = view.findViewById(R.id.createNoteButton);
         createNoteButton.setOnClickListener(v -> {
+            // Aquí podrías comprobar el límite de notas según esPremium antes de abrir el formulario
             Fragment createNoteFragment = new FormNoteFragment();
+
+            Bundle args = new Bundle();
+            args.putString("remember_token", rememberToken);
+            args.putBoolean("esPremium", esPremium);
+            createNoteFragment.setArguments(args);
+
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, createNoteFragment)
@@ -62,7 +77,6 @@ public class NotesFragment extends Fragment {
         loadNotes();
         return view;
     }
-
 
     private void loadNotes() {
         StringRequest request = new StringRequest(Request.Method.POST, NOTES_URL,
@@ -78,7 +92,6 @@ public class NotesFragment extends Fragment {
                             String date = obj.getString("date");
 
                             noteList.add(new Note(idNote, title, text, date));
-
                         }
                         adapter.notifyDataSetChanged();
                     } catch (JSONException e) {

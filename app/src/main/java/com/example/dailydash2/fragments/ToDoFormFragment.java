@@ -1,7 +1,6 @@
 package com.example.dailydash2.fragments;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -38,6 +37,7 @@ public class ToDoFormFragment extends Fragment {
     private final Calendar calendar = Calendar.getInstance();
     private String rememberToken;
     private Integer idTarea = null;
+    private boolean esPremium = false;
 
     @Nullable
     @Override
@@ -50,9 +50,14 @@ public class ToDoFormFragment extends Fragment {
         prioritySpinner = view.findViewById(R.id.prioritySpinner);
         saveButton = view.findViewById(R.id.saveTodoButton);
 
-        rememberToken = requireActivity()
-                .getIntent()
-                .getStringExtra("remember_token");
+        if (getArguments() != null) {
+            rememberToken = getArguments().getString("remember_token");
+            esPremium = getArguments().getBoolean("esPremium", false);
+        } else {
+            rememberToken = requireActivity()
+                    .getIntent()
+                    .getStringExtra("remember_token");
+        }
 
         // Spinner de prioridad
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
