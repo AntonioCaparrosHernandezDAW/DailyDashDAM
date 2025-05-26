@@ -38,28 +38,30 @@ public class ProfileFragment extends Fragment {
         updateUsernameButton = view.findViewById(R.id.updateUsernameButton);
         updatePasswordButton = view.findViewById(R.id.updatePasswordButton);
 
-        rememberToken = requireActivity()
-                .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                .getString("remember_token", null);
+        rememberToken = getArguments() != null ? getArguments().getString("remember_token") : null;
 
-        // Obtener y mostrar el nombre actual del usuario
+        if (rememberToken == null) {
+            Toast.makeText(getContext(), "Token no disponible", Toast.LENGTH_SHORT).show();
+            return view;
+        }
+
         loadCurrentUsername();
 
         updateUsernameButton.setOnClickListener(v -> {
             String newUsername = usernameInput.getText().toString().trim();
-            if (!newUsername.isEmpty()) {
-                updateUsername(newUsername);
-            } else {
+            if (newUsername.isEmpty()) {
                 Toast.makeText(getContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+            } else {
+                updateUsername(newUsername);
             }
         });
 
         updatePasswordButton.setOnClickListener(v -> {
             String newPassword = newPasswordInput.getText().toString().trim();
-            if (!newPassword.isEmpty()) {
-                updatePassword(newPassword);
-            } else {
+            if (newPassword.isEmpty()) {
                 Toast.makeText(getContext(), "Introduce una contraseña nueva", Toast.LENGTH_SHORT).show();
+            } else {
+                updatePassword(newPassword);
             }
         });
 
@@ -76,8 +78,7 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(getContext(), "Error al cargar usuario", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
-        ) {
+                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();
@@ -98,8 +99,7 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
-        ) {
+                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();
@@ -122,8 +122,7 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
-        ) {
+                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();
@@ -134,6 +133,4 @@ public class ProfileFragment extends Fragment {
         };
         Volley.newRequestQueue(requireContext()).add(request);
     }
-
 }
-

@@ -22,8 +22,8 @@ import com.example.dailydash2.fragments.CalendarFragment;
 import com.example.dailydash2.fragments.DiaryFragment;
 import com.example.dailydash2.fragments.NotesFragment;
 import com.example.dailydash2.fragments.PremiumDialogFragment;
-import com.example.dailydash2.fragments.ToDoFragment;
 import com.example.dailydash2.fragments.ProfileFragment;
+import com.example.dailydash2.fragments.ToDoFragment;
 import com.example.dailydash2.models.BbddConnection;
 
 import java.util.Arrays;
@@ -96,13 +96,16 @@ public class MainPage extends AppCompatActivity {
             PopupMenu popup = new PopupMenu(MainPage.this, v);
             MenuInflater inflater = popup.getMenuInflater();
             inflater.inflate(R.menu.user_menu, popup.getMenu());
-
             popup.setOnMenuItemClickListener(item -> {
                 int itemId = item.getItemId();
-
                 if (itemId == R.id.menu_profile) {
+                    ProfileFragment profileFragment = new ProfileFragment();
+                    Bundle args = new Bundle();
+                    args.putString("remember_token", rememberToken);
+                    profileFragment.setArguments(args);
+
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new ProfileFragment())
+                            .replace(R.id.fragment_container, profileFragment)
                             .addToBackStack(null)
                             .commit();
                     return true;
@@ -112,13 +115,10 @@ public class MainPage extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 }
-
                 return false;
             });
-
             popup.show();
         });
-
 
         // Cargar fragmento inicial
         getSupportFragmentManager().beginTransaction()
