@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
@@ -57,21 +58,7 @@ public class ToDoFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         Button createBtn = view.findViewById(R.id.createTodoButton);
-        createBtn.setOnClickListener(v -> {
-            Fragment formFragment = new ToDoFormFragment();
-
-            // Pasar token y esPremium al formulario
-            Bundle args = new Bundle();
-            args.putString("remember_token", rememberToken);
-            args.putBoolean("esPremium", esPremium);
-            formFragment.setArguments(args);
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, formFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        createBtn.setOnClickListener(v -> verificarCantidadTareasYCrear());
 
         loadTodos();
         return view;
@@ -110,6 +97,55 @@ public class ToDoFragment extends Fragment {
                     }
                 },
                 error -> error.printStackTrace()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> map = new HashMap<>();
+                map.put("token", rememberToken);
+                return map;
+            }
+        };
+
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+
+    private void verificarCantidadTareasYCrear() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                BbddConnection.getUrl("count_todos.php"),
+                response -> {
+                    try {
+                        int totalTareas = Integer.parseInt(response.trim());
+
+                        if (esPremium) {
+                            if (totalTareas >= 50) {
+                                Toast.makeText(getContext(), "Has alcanzado el límite de 50 tareas para usuarios Premium", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        } else {
+                            if (totalTareas >= 5) {
+                                Toast.makeText(getContext(), "Has alcanzado el límite de 5 tareas para usuarios gratuitos", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+
+                        // Si no ha superado el límite, abrir formulario
+                        Fragment formFragment = new ToDoFormFragment();
+                        Bundle args = new Bundle();
+                        args.putString("remember_token", rememberToken);
+                        args.putBoolean("esPremium", esPremium);
+                        formFragment.setArguments(args);
+
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, formFragment)
+                                .addToBackStack(null)
+                                .commit();
+
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getContext(), "Error procesando datos", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
         ) {
             @Override
             protected Map<String, String> getParams() {

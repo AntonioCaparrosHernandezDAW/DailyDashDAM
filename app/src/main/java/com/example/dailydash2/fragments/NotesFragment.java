@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
@@ -36,7 +37,7 @@ public class NotesFragment extends Fragment {
     private NoteAdapter adapter;
     private List<Note> noteList = new ArrayList<>();
     private String rememberToken;
-    private boolean esPremium = false; // Añadido para controlar el estado Premium
+    private boolean esPremium = false;
 
     @Nullable
     @Override
@@ -45,12 +46,10 @@ public class NotesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.notesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Obtener argumentos
         if (getArguments() != null) {
             rememberToken = getArguments().getString("remember_token");
             esPremium = getArguments().getBoolean("esPremium", false);
         } else {
-            // Fallback por si acaso
             rememberToken = getActivity().getIntent().getStringExtra("remember_token");
         }
 
@@ -58,23 +57,10 @@ public class NotesFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         Button createNoteButton = view.findViewById(R.id.createNoteButton);
-        createNoteButton.setOnClickListener(v -> {
-            // Aquí podrías comprobar el límite de notas según esPremium antes de abrir el formulario
-            Fragment createNoteFragment = new FormNoteFragment();
-
-            Bundle args = new Bundle();
-            args.putString("remember_token", rememberToken);
-            args.putBoolean("esPremium", esPremium);
-            createNoteFragment.setArguments(args);
-
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, createNoteFragment)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        createNoteButton.setOnClickListener(v -> verificarCantidadNotasYCrear());
 
         loadNotes();
+
         return view;
     }
 
@@ -110,4 +96,57 @@ public class NotesFragment extends Fragment {
 
         Volley.newRequestQueue(requireContext()).add(request);
     }
+
+    private void verificarCantidadNotasYCrear() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                BbddConnection.getUrl("count_notes.php"),
+                response -> {
+                    Log.d("COUNT_NOTES_RESPONSE", response); // Añade esta línea para ver la respuesta
+                    try {
+                        int totalNotas = Integer.parseInt(response.trim());
+
+                        if (esPremium) {
+                            if (totalNotas >= 50) {
+                                Toast.makeText(getContext(), "Has alcanzado el límite de 50 notas para usuarios Premium", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        } else {
+                            if (totalNotas >= 15) {
+                                Toast.makeText(getContext(), "Has alcanzado el límite de 15 notas para usuarios gratuitos", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+
+                        Fragment createNoteFragment = new FormNoteFragment();
+                        Bundle args = new Bundle();
+                        args.putString("remember_token", rememberToken);
+                        args.putBoolean("esPremium", esPremium);
+                        createNoteFragment.setArguments(args);
+
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, createNoteFragment)
+                                .addToBackStack(null)
+                                .commit();
+
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getContext(), "Error procesando datos", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    Log.e("COUNT_NOTES_ERROR", error.toString());
+                    Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show();
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", rememberToken);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(requireContext()).add(request);
+    }
+
 }
