@@ -19,7 +19,7 @@
         android:id="@+id/premiumDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="- 50 notas extra\n- 3 diarios extra\n- Menos anuncios"
+        android:text="- Notas máximas: 10 → 50\n- Caracteres por entrada de diario: 100 → 5000\n- Tareas máximas: 5 → 50\n- Sin anuncios"
         android:layout_marginTop="16dp"
         android:textSize="16sp" />
 
