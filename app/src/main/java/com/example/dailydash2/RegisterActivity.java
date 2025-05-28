@@ -19,11 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
-
     EditText usernameInput, emailInput, passwordInput;
     Button registerBtn;
-
-    private static final String REGISTER_URL = BbddConnection.getUrl("register.php");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +31,16 @@ public class RegisterActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.register_email);
         passwordInput = findViewById(R.id.register_password);
         registerBtn = findViewById(R.id.register_btn);
+        TextView loginTextView = findViewById(R.id.loginTextView);
+        Intent intent = new Intent(this, LoginActivity.class);
 
-        TextView registerTextView = findViewById(R.id.loginTextView);
-
-        registerTextView.setOnClickListener(v -> {
-            Intent intent = new Intent(this, LoginActivity.class);
+        //Carga la LoginActivity
+        loginTextView.setOnClickListener(v -> {
             startActivity(intent);
             finish();
         });
 
+        //Comprueba que los campos no estén vacios y registra al usuario introducido
         registerBtn.setOnClickListener(view -> {
             String username = usernameInput.getText().toString().trim();
             String email = emailInput.getText().toString().trim();
@@ -57,35 +55,20 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser(String username, String email, String password) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
-                response -> {
-                    Log.d("REGISTER_RESPONSE", "Respuesta del servidor: " + response.trim());
-                    switch (response.trim()) {
-                        case "REGISTRO_OK":
-                            Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-                            // Ir al login o MainPage si quieres
-                            startActivity(new Intent(this, LoginActivity.class));
-                            finish();
-                            break;
-                        case "ERROR1":
-                            Toast.makeText(this, "Faltan campos", Toast.LENGTH_SHORT).show();
-                            break;
-                        case "ERROR2":
-                            Toast.makeText(this, "El usuario o email ya existe", Toast.LENGTH_SHORT).show();
-                            break;
-                        case "ERROR3":
-                            Toast.makeText(this, "Error al registrar", Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            Toast.makeText(this, "Error desconocido: " + response, Toast.LENGTH_SHORT).show();
-                            break;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, BbddConnection.getUrl("register.php"), response -> {
+                    String cleanResponse = response.trim();
+
+                    //Si se recibe el texto de exito se cargará la Login Activity
+                    if (cleanResponse.equalsIgnoreCase("Registro exitoso")) {
+                        Intent intentLogin=new Intent(this, LoginActivity.class);
+                        startActivity(intentLogin);
+                        finish();
                     }
-                },
-                error -> {
-                    Log.e("REGISTER_ERROR", "Error: " + error.getMessage());
-                    Toast.makeText(this, "Error de red: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }, error -> {
+                    Toast.makeText(this, "Error de red", Toast.LENGTH_SHORT).show();
                 }
         ) {
+            //Envio por POST de parámetros necesarios
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();

@@ -6,6 +6,7 @@
     android:background="@drawable/rounded_corner"
     android:orientation="vertical">
 
+    <!-- Dialog que se mostrará al querer comprar el premium -->
     <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
@@ -23,6 +24,7 @@
         android:layout_marginTop="16dp"
         android:textSize="16sp" />
 
+    <!-- Botón de comprar -->
     <Button
         android:id="@+id/buyButton"
         android:layout_width="match_parent"
@@ -30,6 +32,7 @@
         android:text="Comprar"
         android:layout_marginTop="24dp" />
 
+    <!-- Botón de volver -->
     <Button
         android:id="@+id/closeButton"
         android:layout_width="match_parent"

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <!-- Selector de fecha -->
     <DatePicker
         android:id="@+id/datePicker"
         android:layout_width="match_parent"
@@ -12,6 +13,7 @@
         android:calendarViewShown="true"
         android:spinnersShown="false" />
 
+    <!-- Barra de carga que aparece cuando se está realizando una petición -->
     <ProgressBar
         android:id="@+id/diaryProgressBar"
         android:layout_width="wrap_content"
@@ -19,6 +21,7 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <!-- Formulario donde se escribirá el texto de la entrada del diario -->
     <EditText
         android:id="@+id/diaryText"
         android:layout_width="match_parent"
@@ -29,6 +32,7 @@
         android:hint="Escribe aquí tu entrada del diario..."
         android:padding="12dp" />
 
+    <!-- Botón para guardar los datos -->
     <Button
         android:id="@+id/saveDiaryButton"
         android:layout_width="match_parent"

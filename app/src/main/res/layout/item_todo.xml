@@ -32,6 +32,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true">
 
+        <!-- Botón de completar -->
         <ImageView
             android:id="@+id/checkIcon"
             android:layout_width="24dp"
@@ -39,6 +40,7 @@
             android:layout_marginEnd="8dp"
             app:srcCompat="@android:drawable/checkbox_on_background" />
 
+        <!-- Botón de editar -->
         <ImageView
             android:id="@+id/editIcon"
             android:layout_width="24dp"
@@ -46,6 +48,7 @@
             android:layout_marginEnd="8dp"
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
+        <!-- Botón de eliminar -->
         <ImageView
             android:id="@+id/deleteIcon"
             android:layout_width="24dp"

@@ -2,7 +2,6 @@ package com.example.dailydash2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuInflater;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -32,44 +31,46 @@ import java.util.List;
 import java.util.Map;
 
 public class MainPage extends AppCompatActivity {
-
     DrawerLayout drawerLayout;
     ListView menuList;
     ImageView menuIcon, userMenuIcon;
-
-    List<String> menuItems = Arrays.asList(
-            "Notas", "Diario", "Calendario", "Tareas", "Comprar Premium"
-    );
-
     ArrayAdapter<String> adapter;
     String rememberToken;
     boolean esPremium = false;
+
+    //Lista de opciones del menú lateral
+    List<String> menuItems = Arrays.asList("Notas", "Diario", "Calendario", "Tareas", "Comprar Premium");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
+        //Recoge el Token
         rememberToken = getIntent().getStringExtra("remember_token");
-        Log.d("TOKEN_MAINPAGE", "Token recibido: " + rememberToken);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         menuList = findViewById(R.id.menu_list);
         menuIcon = findViewById(R.id.menu_icon);
         userMenuIcon = findViewById(R.id.user_menu_icon);
 
+        //Adaptador para el menú lateral
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, menuItems);
         menuList.setAdapter(adapter);
 
+        //Abre el menú lateral
         menuIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
+        //Acción que se ejecuta al pulsar en cualquier acción del menú lateral
         menuList.setOnItemClickListener((parent, view, position, id) -> {
             Fragment selectedFragment = null;
 
+            //Crea un paquete con los parámetros que se pasarán
             Bundle args = new Bundle();
             args.putString("remember_token", rememberToken);
             args.putBoolean("esPremium", esPremium);
 
+            //Selecciona un fragmento según la opción que haya seleccionado el usuario
             switch (position) {
                 case 0:
                     selectedFragment = new NotesFragment();
@@ -84,11 +85,13 @@ public class MainPage extends AppCompatActivity {
                     selectedFragment = new ToDoFragment();
                     break;
                 case 4:
-                    verificarYMostrarPremiumDialog();
+                    //Comprueba si mostrar el dialog sobre el premium
+                    checkAndShowPremiumDialog();
                     drawerLayout.closeDrawer(GravityCompat.START);
                     return;
             }
 
+            //Carga el fragmento
             if (selectedFragment != null) {
                 selectedFragment.setArguments(args);
                 getSupportFragmentManager().beginTransaction()
@@ -96,15 +99,21 @@ public class MainPage extends AppCompatActivity {
                         .commit();
             }
 
+            //Cierra el menú lateral
             drawerLayout.closeDrawer(GravityCompat.START);
         });
 
+        //Gestór de acción al pulsar en el icono de usuario (arriba derecha)
         userMenuIcon.setOnClickListener(v -> {
+            //Se crea un menú emergente
             PopupMenu popup = new PopupMenu(MainPage.this, v);
             MenuInflater inflater = popup.getMenuInflater();
             inflater.inflate(R.menu.user_menu, popup.getMenu());
+
             popup.setOnMenuItemClickListener(item -> {
                 int itemId = item.getItemId();
+
+                //Si se selecciona la primera opción se carga el fragmento del perfil
                 if (itemId == R.id.menu_profile) {
                     ProfileFragment profileFragment = new ProfileFragment();
                     Bundle args = new Bundle();
@@ -117,9 +126,11 @@ public class MainPage extends AppCompatActivity {
                             .addToBackStack(null)
                             .commit();
                     return true;
+
+                //Si se selecciona la otra opción se carga la LoginActivity
                 } else if (itemId == R.id.menu_logout) {
                     Intent intent = new Intent(MainPage.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //Inicia una nueva task y borra el historial de modo que el usuario no pueda pulsar "volver atrás" y retroceder a la MainPage
                     startActivity(intent);
                     return true;
                 }
@@ -128,24 +139,23 @@ public class MainPage extends AppCompatActivity {
             popup.show();
         });
 
-        // Cargar fragmento inicial
+        // Cargar fragmento de notas (es el fragmento por defecto)
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new NotesFragment())
                 .commit();
 
-        verificarEstadoPremium(rememberToken);
+        chackPremium(rememberToken);
     }
 
-    private void verificarEstadoPremium(String token) {
+    //Comprueba en la base de datos si el usuario es premium
+    private void chackPremium(String token) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                BbddConnection.getUrl("check_premium.php"),
-                response -> {
+                BbddConnection.getUrl("check_premium.php"), response -> {
                     esPremium = response.trim().equals("1");
-                    actualizarMenuPremium(esPremium);
-                },
-                error -> {
+                    choosePremiumMenuText(esPremium);
+                }, error -> {
                     esPremium = false;
-                    actualizarMenuPremium(false);
+                    choosePremiumMenuText(false);
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -158,15 +168,16 @@ public class MainPage extends AppCompatActivity {
         Volley.newRequestQueue(this).add(request);
     }
 
-    private void actualizarMenuPremium(boolean premium) {
+    //Cambia el texto de la 5º opción del menú lateral en función de si el usuario es premium o no
+    private void choosePremiumMenuText(boolean premium) {
         menuItems.set(4, premium ? "Ya eres Premium" : "Comprar Premium");
-        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged(); //Avisa de que hay que volver a cargar el contenido
     }
 
-    private void verificarYMostrarPremiumDialog() {
+    //Comprueba si el usuario es premium y si ya lo es no abre el Dialog de premium
+    private void checkAndShowPremiumDialog() {
         StringRequest request = new StringRequest(Request.Method.POST,
-                BbddConnection.getUrl("check_premium.php"),
-                response -> {
+                BbddConnection.getUrl("check_premium.php"), response -> {
                     boolean esPremium = response.trim().equals("1");
 
                     if (esPremium) {
@@ -174,8 +185,7 @@ public class MainPage extends AppCompatActivity {
                     } else {
                         new PremiumDialogFragment().show(getSupportFragmentManager(), "PremiumDialog");
                     }
-                },
-                error -> {
+                },  error -> {
                     Toast.makeText(this, "Error al verificar estado premium", Toast.LENGTH_SHORT).show();
                 }) {
             @Override

@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Botón de crear -->
         <Button
             android:id="@+id/createNoteButton"
             android:layout_width="wrap_content"
@@ -18,6 +19,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="8dp" />
 
+        <!-- Lista de Notas -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/notesRecyclerView"
             android:layout_width="match_parent"

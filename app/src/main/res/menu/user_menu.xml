@@ -1,7 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Menú desplegable con perfil o cerrar sesión -->
+    <!-- Perfil -->
     <item
         android:id="@+id/menu_profile"
         android:title="Perfil" />
+    <!-- Cerrar sesión -->
     <item
         android:id="@+id/menu_logout"
         android:title="Cerrar Sesión" />

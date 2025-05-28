@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Formulario de creación de tareas -->
         <EditText
             android:id="@+id/todoTitleInput"
             android:layout_width="match_parent"

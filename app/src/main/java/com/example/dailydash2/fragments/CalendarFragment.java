@@ -22,13 +22,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class CalendarFragment extends Fragment {
-
     private CalendarView calendarView;
     private String rememberToken;
 
@@ -37,52 +35,57 @@ public class CalendarFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
+        //Recoge el token del intent pasado
         rememberToken = requireActivity().getIntent().getStringExtra("remember_token");
+
         calendarView = view.findViewById(R.id.calendarView);
 
+        //Código que se ejecuta al seleccionar una fecha en el calendario
         calendarView.setOnDateChangeListener((view1, year, month, dayOfMonth) -> {
-            String fecha = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
-            cargarTareasParaFecha(fecha);
+            String fecha = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);   //Formatea la fecha para apsarla a la función siguiente
+            loadToDosForSelectedDate(fecha);
         });
 
         return view;
     }
 
-    private void cargarTareasParaFecha(String fecha) {
+    //Método que solicita al servidor las tareas para X fecha
+    private void loadToDosForSelectedDate(String fecha) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                BbddConnection.getUrl("get_todos_by_date.php"),
-                response -> {
-                    try {
-                        JSONArray array = new JSONArray(response);
+                BbddConnection.getUrl("get_todos_by_date.php"), response -> {
+            try {
+                JSONArray array = new JSONArray(response);
 
-                        if (array.length() == 0) {
-                            Toast.makeText(getContext(), "No hay tareas para ese día", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+                //Comprobación de que hayan tareas
+                if (array.length() == 0) {
+                    Toast.makeText(getContext(), "No hay tareas para ese día", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                        StringBuilder tareasTexto = new StringBuilder();
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject tarea = array.getJSONObject(i);
-                            String titulo = tarea.getString("titulo");
-                            String inicio = tarea.getString("fechaInicio");
-                            String fin = tarea.getString("fechaFin");
+                //Crea un string donde cada columna correspondrá a TITULO + FECHA INICIO + → + FECHA FIN + (salto de línea)
+                StringBuilder tareasTexto = new StringBuilder();
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject tarea = array.getJSONObject(i);
+                    String titulo = tarea.getString("titulo");
+                    String inicio = tarea.getString("fechaInicio");
+                    String fin = tarea.getString("fechaFin");
 
-                            tareasTexto.append("- ").append(titulo)
-                                    .append(" (").append(inicio).append(" → ").append(fin).append(")\n");
-                        }
+                    tareasTexto.append("- ").append(titulo).append(" (").append(inicio).append(" → ").append(fin).append(")\n");
+                }
 
-                        new AlertDialog.Builder(requireContext())
-                                .setTitle("Tareas para " + fecha)
-                                .setMessage(tareasTexto.toString())
-                                .setPositiveButton("Cerrar", null)
-                                .show();
+                //Muestra el resultado del String en una alerta
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Tareas para " + fecha)
+                        .setMessage(tareasTexto.toString())
+                        .setPositiveButton("Cerrar", null)
+                        .show();
 
-                    } catch (JSONException e) {
-                        Toast.makeText(getContext(), "Error al procesar datos", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+            } catch (JSONException e) {
+                Toast.makeText(getContext(), "Error al procesar datos", Toast.LENGTH_SHORT).show();
+            }
+        }, error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
         ) {
+            //Parámetros para la petición POST
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();

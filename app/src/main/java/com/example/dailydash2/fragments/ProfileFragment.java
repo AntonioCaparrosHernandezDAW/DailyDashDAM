@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileFragment extends Fragment {
-
     private EditText usernameInput, newPasswordInput;
     private Button updateUsernameButton, updatePasswordButton;
     private String rememberToken;
@@ -38,15 +37,13 @@ public class ProfileFragment extends Fragment {
         updateUsernameButton = view.findViewById(R.id.updateUsernameButton);
         updatePasswordButton = view.findViewById(R.id.updatePasswordButton);
 
+        //Recoge el valor de remember_token si los argumentos no son null
         rememberToken = getArguments() != null ? getArguments().getString("remember_token") : null;
 
-        if (rememberToken == null) {
-            Toast.makeText(getContext(), "Token no disponible", Toast.LENGTH_SHORT).show();
-            return view;
-        }
-
+        //Carga el nombre del usuario
         loadCurrentUsername();
 
+        //Lógica al pulsar el botón de cambiar nombre de usuario, comprueba que el campo no esté vacío
         updateUsernameButton.setOnClickListener(v -> {
             String newUsername = usernameInput.getText().toString().trim();
             if (newUsername.isEmpty()) {
@@ -56,6 +53,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        //Misma lógica que el cambio de nombre de usuario pero con la contraseña
         updatePasswordButton.setOnClickListener(v -> {
             String newPassword = newPasswordInput.getText().toString().trim();
             if (newPassword.isEmpty()) {
@@ -68,17 +66,19 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    //Carga el username actual
     private void loadCurrentUsername() {
         StringRequest request = new StringRequest(Request.Method.POST,
-                BbddConnection.getUrl("get_username.php"),
-                response -> {
-                    if (!response.trim().startsWith("ERROR")) {
-                        usernameInput.setText(response.trim());
-                    } else {
-                        Toast.makeText(getContext(), "Error al cargar usuario", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
+                BbddConnection.getUrl("get_username.php"), response -> {
+            String cleanResponse = response.trim();
+
+            if (!cleanResponse.toLowerCase().startsWith("error")) {
+                usernameInput.setText(cleanResponse);   //Correcto
+            } else {
+                Toast.makeText(getContext(), "ERROR: " + cleanResponse, Toast.LENGTH_SHORT).show(); //Error
+            }
+        }, error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+        ) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();
@@ -86,20 +86,20 @@ public class ProfileFragment extends Fragment {
                 return map;
             }
         };
+
         Volley.newRequestQueue(requireContext()).add(request);
     }
 
+    //Lógica para cambiar el username en la base de datos
     private void updateUsername(String newUsername) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                BbddConnection.getUrl("update_username.php"),
-                response -> {
-                    if (response.trim().equals("OK")) {
-                        Toast.makeText(getContext(), "Nombre actualizado", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
-                    }
-                },
-                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
+                BbddConnection.getUrl("update_username.php"), response -> {
+            if (response.trim().equals("OK")) {
+                Toast.makeText(getContext(), "Nombre actualizado", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
+            }
+        }, error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();
@@ -111,18 +111,17 @@ public class ProfileFragment extends Fragment {
         Volley.newRequestQueue(requireContext()).add(request);
     }
 
+    //Lógica para cambiar la contraseña en la base de datos
     private void updatePassword(String newPassword) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                BbddConnection.getUrl("update_password.php"),
-                response -> {
-                    if (response.trim().equals("OK")) {
-                        Toast.makeText(getContext(), "Contraseña modificada", Toast.LENGTH_SHORT).show();
-                        newPasswordInput.setText("");
-                    } else {
-                        Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
-                    }
-                },
-                error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
+                BbddConnection.getUrl("update_password.php"), response -> {
+            if (response.trim().equals("OK")) {
+                Toast.makeText(getContext(), "Contraseña modificada", Toast.LENGTH_SHORT).show();
+                newPasswordInput.setText("");
+            } else {
+                Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
+            }
+        }, error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> map = new HashMap<>();

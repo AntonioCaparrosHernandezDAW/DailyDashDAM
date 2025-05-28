@@ -1,11 +1,13 @@
 package com.example.dailydash2.models;
 
+//Objeto que gestiona cada nota en NoteFragment
 public class Note {
     public int idNote;
     public String title;
     public String text;
     public String date;
 
+    //Constructor
     public Note(int idNote, String title, String text, String date) {
         this.idNote = idNote;
         this.title = title;

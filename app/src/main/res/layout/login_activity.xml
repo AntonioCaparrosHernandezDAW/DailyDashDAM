@@ -47,6 +47,7 @@
             android:padding="18dp"
             android:inputType="textPassword" />
 
+        <!-- Botón para acceder con el usuario -->
         <Button
             android:id="@+id/login_btn"
             android:layout_width="match_parent"
@@ -58,6 +59,7 @@
             android:layout_marginTop="32dp"
             android:textSize="20sp" />
 
+        <!-- Texto que al pulsarlo redirige a RegisterActivity -->
         <TextView
             android:id="@+id/registerTextView"
             android:layout_width="match_parent"
@@ -68,7 +70,7 @@
             android:textColor="@color/white" />
     </LinearLayout>
 
-    <!-- Botón fijo abajo a la derecha -->
+    <!-- Botón de cerrar la aplicación -->
     <Button
         android:id="@+id/exitButton"
         android:layout_width="wrap_content"

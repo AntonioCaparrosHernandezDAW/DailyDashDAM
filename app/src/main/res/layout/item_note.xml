@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Botón de editar -->
         <ImageView
             android:id="@+id/editIcon"
             android:layout_width="24dp"
@@ -21,6 +22,7 @@
             android:contentDescription="Editar nota"
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
+        <!-- Botón de borrar -->
         <ImageView
             android:id="@+id/deleteIcon"
             android:layout_width="24dp"
@@ -37,6 +39,7 @@
             android:layout_marginEnd="80dp"
             android:padding="8dp">
 
+            <!-- Texto donde se incluyen el titulo, el texto y la fecha -->
             <TextView
                 android:id="@+id/noteTitle"
                 android:layout_width="match_parent"

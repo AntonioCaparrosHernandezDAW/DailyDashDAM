@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ToDoFormFragment extends Fragment {
-
     private EditText titleInput, startDateInput, endDateInput;
     private Spinner prioritySpinner;
     private Button saveButton;
@@ -50,6 +49,7 @@ public class ToDoFormFragment extends Fragment {
         prioritySpinner = view.findViewById(R.id.prioritySpinner);
         saveButton = view.findViewById(R.id.saveTodoButton);
 
+        //Recoge el remember_token y el premium del paquete o solo el token del intent
         if (getArguments() != null) {
             rememberToken = getArguments().getString("remember_token");
             esPremium = getArguments().getBoolean("esPremium", false);
@@ -59,19 +59,16 @@ public class ToDoFormFragment extends Fragment {
                     .getStringExtra("remember_token");
         }
 
-        // Spinner de prioridad
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.priority_levels,
-                android.R.layout.simple_spinner_item);
+        //Selector de prioridad
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(), R.array.priority_levels, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         prioritySpinner.setAdapter(adapter);
 
-        // Date pickers
+        //Selectores de fecha de inicio y fin
         startDateInput.setOnClickListener(v -> showDatePicker(startDateInput));
         endDateInput.setOnClickListener(v -> showDatePicker(endDateInput));
 
-        // Comprobar si venimos en modo edición
+        //Comprobación de si la tarea se está editando o creando en valor de si el id es >=1
         Bundle args = getArguments();
         if (args != null) {
             idTarea = args.getInt("idTarea", -1);
@@ -86,22 +83,26 @@ public class ToDoFormFragment extends Fragment {
             }
         }
 
+        //Lógica del botón de guardar
         saveButton.setOnClickListener(v -> {
             String title = titleInput.getText().toString().trim();
             String priority = prioritySpinner.getSelectedItem().toString();
             String start = startDateInput.getText().toString().trim();
             String end = endDateInput.getText().toString().trim();
 
+            //Comprobación de campos vacios
             if (title.isEmpty() || start.isEmpty() || end.isEmpty()) {
                 Toast.makeText(getContext(), "Rellena todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            //Formateo de fecha
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 java.util.Date startDate = sdf.parse(start);
                 java.util.Date endDate = sdf.parse(end);
 
+                //Comprobación de que la tarea no termine antes de la fecha de inicio
                 if (startDate != null && endDate != null && endDate.before(startDate)) {
                     Toast.makeText(getContext(), "La fecha de fin no puede ser anterior a la de inicio", Toast.LENGTH_LONG).show();
                     return;
@@ -111,6 +112,7 @@ public class ToDoFormFragment extends Fragment {
                 return;
             }
 
+            //Preparación de datos a enviar
             String url;
             Map<String, String> params = new HashMap<>();
             params.put("token", rememberToken);
@@ -119,6 +121,7 @@ public class ToDoFormFragment extends Fragment {
             params.put("startDate", start);
             params.put("endDate", end);
 
+            //Selección de acción que realidad en valor del id
             if (idTarea != null && idTarea != -1) {
                 url = BbddConnection.getUrl("update_todo.php");
                 params.put("idTarea", String.valueOf(idTarea));
@@ -126,16 +129,14 @@ public class ToDoFormFragment extends Fragment {
                 url = BbddConnection.getUrl("create_todo.php");
             }
 
-            StringRequest request = new StringRequest(Request.Method.POST, url,
-                    response -> {
-                        if (response.trim().equals("OK")) {
-                            Toast.makeText(getContext(), "Tarea guardada", Toast.LENGTH_SHORT).show();
-                            requireActivity().getSupportFragmentManager().popBackStack();
-                        } else {
-                            Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
-                        }
-                    },
-                    error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+            StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+                if (response.trim().equals("OK")) {
+                    Toast.makeText(getContext(), "Tarea guardada", Toast.LENGTH_SHORT).show();
+                    requireActivity().getSupportFragmentManager().popBackStack();
+                } else {
+                    Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
+                }
+            }, error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
             ) {
                 @Override
                 protected Map<String, String> getParams() {
@@ -149,6 +150,7 @@ public class ToDoFormFragment extends Fragment {
         return view;
     }
 
+    //Abrir selector de fecha al pulsar sobre fecha inicio y fecha fin
     private void showDatePicker(EditText target) {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);

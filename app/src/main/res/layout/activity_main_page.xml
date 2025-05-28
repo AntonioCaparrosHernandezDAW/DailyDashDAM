@@ -6,19 +6,20 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <!-- Contenido principal -->
+    <!-- Bloque principal -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Header con botón de menú y una imagen -->
+        <!-- Header -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:background="#3B84F1">
 
+            <!-- Botón izquierdo -->
             <ImageView
                 android:id="@+id/menu_icon"
                 android:layout_width="38dp"
@@ -28,6 +29,7 @@
                 android:contentDescription="Menú"
                 app:srcCompat="@drawable/iconoopciones2" />
 
+            <!-- Botón derecho -->
             <ImageView
                 android:id="@+id/user_menu_icon"
                 android:layout_width="32dp"

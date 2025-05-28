@@ -1,5 +1,6 @@
 package com.example.dailydash2.models;
 
+//Objeto que gestiona cada tarea en ToDoFragment
 public class ToDo {
     private int idTarea;
     private String titulo;
@@ -8,6 +9,7 @@ public class ToDo {
     private String fechaFin;
     private boolean completada;
 
+    //Contructor
     public ToDo(int idTarea, String titulo, String prioridad, String fechaInicio, String fechaFin, boolean completada) {
         this.idTarea = idTarea;
         this.titulo = titulo;

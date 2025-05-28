@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal">
 
+        <!-- Formulario y botón par acambiar el usuario -->
         <EditText
             android:id="@+id/usernameInput"
             android:layout_width="match_parent"
@@ -22,12 +23,10 @@
             android:id="@+id/updateUsernameButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Modificar nombre de usuario" />
+            android:text="Modificar nombre de usuario"
+            android:layout_marginBottom="24dp"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp" />
-
+        <!-- Formulario y botón para cambiar la contraseña -->
         <EditText
             android:id="@+id/newPasswordInput"
             android:layout_width="match_parent"
