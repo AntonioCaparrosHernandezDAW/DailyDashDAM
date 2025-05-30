@@ -1,5 +1,8 @@
 package com.example.dailydash2.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -39,6 +42,11 @@ public class DiaryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_diary, container, false);
+
+        //Carga el color de fondo guardado
+        SharedPreferences prefs = requireContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        int color = prefs.getInt("backgroundColor", Color.WHITE);
+        view.setBackgroundColor(color);
 
         diaryText = view.findViewById(R.id.diaryText);
         datePicker = view.findViewById(R.id.datePicker);

@@ -1,6 +1,9 @@
 package com.example.dailydash2.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +37,11 @@ public class CalendarFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
+
+        //Carga el color de fondo guardado
+        SharedPreferences prefs = requireContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        int color = prefs.getInt("backgroundColor", Color.WHITE);
+        view.setBackgroundColor(color);
 
         //Recoge el token del intent pasado
         rememberToken = requireActivity().getIntent().getStringExtra("remember_token");

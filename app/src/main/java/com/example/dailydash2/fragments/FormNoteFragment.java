@@ -1,5 +1,8 @@
 package com.example.dailydash2.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,11 @@ public class FormNoteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_form_note, container, false);
+
+        //Carga el color de fondo guardado
+        SharedPreferences prefs = requireContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        int color = prefs.getInt("backgroundColor", Color.WHITE);
+        view.setBackgroundColor(color);
 
         titleInput = view.findViewById(R.id.noteTitleInput);
         textInput = view.findViewById(R.id.noteTextInput);

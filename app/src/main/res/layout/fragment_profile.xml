@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp">
@@ -40,5 +41,112 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Modificar contraseña" />
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temas"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp" />
+
+        <!-- Selector de temas -->
+        <GridLayout
+            android:id="@+id/themeGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:rowCount="2"
+            android:layout_margin="10dp"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:rowOrderPreserved="false">
+
+            <!-- Botones con colores asociados -->
+            <Button
+                android:id="@+id/themeGray"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:backgroundTint="#EBEBEB"
+                android:text="Gris"
+                android:textColor="#424242"
+                android:textStyle="bold"
+                app:rippleColor="#998E8E" />
+
+            <Button
+                android:id="@+id/themeBlue"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:backgroundTint="#B9DBFF"
+                android:text="Azul claro"
+                android:textColor="#424242"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/themeOrange"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:backgroundTint="#FDD8A7"
+                android:text="Naranja"
+                android:textColor="#424242"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/themePink"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:backgroundTint="#FFBCDB"
+                android:text="Rosa claro"
+                android:textColor="#424242"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/themeGreen"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:backgroundTint="#BCFFC6"
+                android:text="Menta"
+                android:textColor="#424242"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/themePurple"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:backgroundTint="#DFBCFF"
+                android:text="Lila"
+                android:textColor="#424242"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/themeSalmon"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:backgroundTint="#FFB2B2"
+                android:text="Salmón"
+                android:textColor="#424242"
+                android:textStyle="bold" />
+        </GridLayout>
     </LinearLayout>
 </ScrollView>

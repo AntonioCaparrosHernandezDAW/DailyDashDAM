@@ -1,6 +1,9 @@
 package com.example.dailydash2.fragments;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -42,6 +45,11 @@ public class ToDoFormFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_to_do_form, container, false);
+
+        //Carga el color de fondo guardado
+        SharedPreferences prefs = requireContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        int color = prefs.getInt("backgroundColor", Color.WHITE);
+        view.setBackgroundColor(color);
 
         titleInput = view.findViewById(R.id.todoTitleInput);
         startDateInput = view.findViewById(R.id.startDateInput);

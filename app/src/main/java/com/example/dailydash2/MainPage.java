@@ -118,7 +118,6 @@ public class MainPage extends AppCompatActivity {
                     ProfileFragment profileFragment = new ProfileFragment();
                     Bundle args = new Bundle();
                     args.putString("remember_token", rememberToken);
-                    args.putBoolean("esPremium", esPremium);
                     profileFragment.setArguments(args);
 
                     getSupportFragmentManager().beginTransaction()

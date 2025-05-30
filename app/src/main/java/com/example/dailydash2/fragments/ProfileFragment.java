@@ -1,6 +1,8 @@
 package com.example.dailydash2.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +33,11 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        //Cargar el backgroundColor según las preferencias existentes
+        SharedPreferences prefs = requireContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        int color = prefs.getInt("backgroundColor", Color.WHITE);
+        view.setBackgroundColor(color);
 
         usernameInput = view.findViewById(R.id.usernameInput);
         newPasswordInput = view.findViewById(R.id.newPasswordInput);
@@ -63,7 +70,37 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        //Asignación de funcionalidad a los botones de cambio de color
+        view.findViewById(R.id.themeGray).setOnClickListener(v -> changeBackground("#EBEBEBFF", view, prefs, rememberToken));
+        view.findViewById(R.id.themeBlue).setOnClickListener(v -> changeBackground("#B9DBFF", view, prefs, rememberToken));
+        view.findViewById(R.id.themeOrange).setOnClickListener(v -> changeBackground("#FDD8A7FF", view, prefs, rememberToken));
+        view.findViewById(R.id.themePink).setOnClickListener(v -> changeBackground("#FFBCDBFF", view, prefs, rememberToken));
+        view.findViewById(R.id.themeGreen).setOnClickListener(v -> changeBackground("#BCFFC6", view, prefs, rememberToken));
+        view.findViewById(R.id.themePurple).setOnClickListener(v -> changeBackground("#DFBCFF", view, prefs, rememberToken));
+        view.findViewById(R.id.themeSalmon).setOnClickListener(v -> changeBackground("#FFB2B2", view, prefs, rememberToken));
+
         return view;
+    }
+
+    //Función para cambiar el color de fondo en todos los fragments
+    private void changeBackground(String hexColor, View view, SharedPreferences prefs, String rememberToken){
+        //Recoge el color y lo guarda en las preferencias compartidas
+        int color = Color.parseColor(hexColor);
+        prefs.edit().putInt("backgroundColor", color).apply();
+        view.setBackgroundColor(color);
+
+        //Carga de nuevo el fragmento para que se actuaalice el color de fondo
+        ProfileFragment profileFragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString("remember_token", rememberToken);
+        profileFragment.setArguments(args);
+
+        requireActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, profileFragment)  //no se puede cargar un new ProfileFragment() como en MainPage.java porque sino no recibiría parámetros
+                .addToBackStack(null)
+                .commit();
     }
 
     //Carga el username actual
