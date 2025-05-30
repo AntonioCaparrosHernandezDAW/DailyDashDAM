@@ -62,8 +62,8 @@ public class LoginActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, BbddConnection.getUrl("login.php"), response -> {
                     String cleanResponse = response.trim();
 
-                    if (cleanResponse.startsWith("ACCESO:")) {
-                        String token = cleanResponse.substring(7); // Extrae el token tras "ACCESO:"
+                    if (cleanResponse.startsWith("OK:")) {
+                        String token = cleanResponse.substring(3); // Extrae el token tras "OK:"
                         Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show();
 
                         //Envia el token a MainPage

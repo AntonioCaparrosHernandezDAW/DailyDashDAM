@@ -56,17 +56,20 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerUser(String username, String email, String password) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, BbddConnection.getUrl("register.php"), response -> {
-                    String cleanResponse = response.trim();
+            String cleanResponse = response.trim();
 
-                    //Si se recibe el texto de exito se cargará la Login Activity
-                    if (cleanResponse.equalsIgnoreCase("Registro exitoso")) {
-                        Intent intentLogin=new Intent(this, LoginActivity.class);
-                        startActivity(intentLogin);
-                        finish();
-                    }
-                }, error -> {
-                    Toast.makeText(this, "Error de red", Toast.LENGTH_SHORT).show();
-                }
+            //Si se recibe el texto de exito se cargará la Login Activity
+            if (cleanResponse.equalsIgnoreCase("OK")) {
+                Toast.makeText(this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show();
+                Intent intentLogin = new Intent(this, LoginActivity.class);
+                startActivity(intentLogin);
+                finish();
+            } else {
+                Toast.makeText(this, "Error: " + cleanResponse, Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Toast.makeText(this, "Error de red", Toast.LENGTH_SHORT).show();
+        }
         ) {
             //Envio por POST de parámetros necesarios
             @Override
