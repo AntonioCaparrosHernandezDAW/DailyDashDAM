@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +134,8 @@ public class ToDoFormFragment extends Fragment {
             if (idTarea != null && idTarea != -1) {
                 url = BbddConnection.getUrl("update_todo.php");
                 params.put("idTarea", String.valueOf(idTarea));
+                Log.d("DEBUG_TODO_PARAMS", "Token: " + rememberToken + ", ID: " + idTarea + ", Title: " + title);
+
             } else {
                 url = BbddConnection.getUrl("create_todo.php");
             }
@@ -144,7 +147,7 @@ public class ToDoFormFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "Error: " + response, Toast.LENGTH_SHORT).show();
                 }
-            }, error -> Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show()
+            }, error -> Toast.makeText(getContext(), "Error de red 123", Toast.LENGTH_SHORT).show()
             ) {
                 @Override
                 protected Map<String, String> getParams() {

@@ -73,8 +73,8 @@ public class ProfileFragment extends Fragment {
         //Asignación de funcionalidad a los botones de cambio de color
         view.findViewById(R.id.themeGray).setOnClickListener(v -> changeBackground("#EBEBEBFF", view, prefs, rememberToken));
         view.findViewById(R.id.themeBlue).setOnClickListener(v -> changeBackground("#B9DBFF", view, prefs, rememberToken));
-        view.findViewById(R.id.themeOrange).setOnClickListener(v -> changeBackground("#FDD8A7FF", view, prefs, rememberToken));
-        view.findViewById(R.id.themePink).setOnClickListener(v -> changeBackground("#FFBCDBFF", view, prefs, rememberToken));
+        view.findViewById(R.id.themeOrange).setOnClickListener(v -> changeBackground("#FDD8A7", view, prefs, rememberToken));
+        view.findViewById(R.id.themePink).setOnClickListener(v -> changeBackground("#FFBCDB", view, prefs, rememberToken));
         view.findViewById(R.id.themeGreen).setOnClickListener(v -> changeBackground("#BCFFC6", view, prefs, rememberToken));
         view.findViewById(R.id.themePurple).setOnClickListener(v -> changeBackground("#DFBCFF", view, prefs, rememberToken));
         view.findViewById(R.id.themeSalmon).setOnClickListener(v -> changeBackground("#FFB2B2", view, prefs, rememberToken));

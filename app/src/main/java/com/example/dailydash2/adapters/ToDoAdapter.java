@@ -83,6 +83,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder
             //Crea un paquete con datos
             Bundle args = new Bundle();
             args.putInt("idTarea", todo.getIdTarea());
+            args.putString("remember_token", rememberToken);
             args.putString("titulo", todo.getTitulo());
             args.putString("prioridad", todo.getPrioridad());
             args.putString("fechaInicio", todo.getFechaInicio());

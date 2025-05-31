@@ -143,11 +143,11 @@ public class MainPage extends AppCompatActivity {
                 .replace(R.id.fragment_container, new NotesFragment())
                 .commit();
 
-        chackPremium(rememberToken);
+        checkPremium(rememberToken);
     }
 
     //Comprueba en la base de datos si el usuario es premium
-    private void chackPremium(String token) {
+    private void checkPremium(String token) {
         StringRequest request = new StringRequest(Request.Method.POST,
                 BbddConnection.getUrl("check_premium.php"), response -> {
                     esPremium = response.trim().equals("1");

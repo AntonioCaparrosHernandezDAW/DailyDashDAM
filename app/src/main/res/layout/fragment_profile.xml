@@ -96,7 +96,7 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
                 android:backgroundTint="#FDD8A7"
-                android:text="Naranja"
+                android:text="Amarillo"
                 android:textColor="#424242"
                 android:textStyle="bold" />
 

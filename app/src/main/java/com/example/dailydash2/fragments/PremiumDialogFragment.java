@@ -54,11 +54,11 @@ public class PremiumDialogFragment extends DialogFragment {
             * */
             StringRequest request = new StringRequest(Request.Method.POST,
                     BbddConnection.getUrl("activate_premium.php"), response -> {
-                String url = "https://buy.stripe.com/test_14AdRafi0amy0NVbpTcMM00";
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
+                intent.setData(Uri.parse("https://buy.stripe.com/test_14AdRafi0amy0NVbpTcMM00"));
                 startActivity(intent);
 
+                requireActivity().recreate();   //Recarga la MainPage para que se ejecuten los cambios de ser premium
                 dismiss();  //Cierre de dialog
             }, error -> {
                 Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show();
